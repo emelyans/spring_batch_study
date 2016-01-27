@@ -23,7 +23,7 @@ public class ChunkListenerInterface implements ChunkListener {
     }
 
     public void afterChunkError(ChunkContext context) {
-        logger.debug("afterChunkError: {}", context);
+        logger.error("afterChunkError: {}", context);
     }
 
 }

@@ -25,6 +25,6 @@ public class ChunkListenerAnnotations {
 
     @AfterChunkError
     public void afterChunkError(ChunkContext context) {
-        logger.debug("afterChunkError: {}", context);
+        logger.error("afterChunkError: {}", context);
     }
 }
