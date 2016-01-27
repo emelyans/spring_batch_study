@@ -39,6 +39,10 @@
 
     <bean id="itemReadListenerAnnotations" class="com.test.sbt.job.reader.ItemReadListenerAnnotations"/>
 
+    <bean id="itemProcessListenerInterface" class="com.test.sbt.job.processor.ItemProcessListenerInterface"/>
+
+    <bean id="itemProcessListenerAnnotations" class="com.test.sbt.job.processor.ItemProcessListenerAnnotations"/>
+
 
     <!-- Steps -->
     <bean id="itemReader" class="org.springframework.batch.item.file.FlatFileItemReader">
@@ -116,6 +120,8 @@
                         <batch:listener ref="chunkListenerInterface"/>
                         <batch:listener ref="itemReadListenerAnnotations"/>
                         <batch:listener ref="itemReadListenerInterface"/>
+                        <batch:listener ref="itemProcessListenerAnnotations"/>
+                        <batch:listener ref="itemProcessListenerInterface"/>
                     </batch:listeners>
                 </batch:chunk>
             </batch:tasklet>
