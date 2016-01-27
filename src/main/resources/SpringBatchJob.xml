@@ -7,6 +7,7 @@
             http://www.springframework.org/schema/batch
             http://www.springframework.org/schema/batch/spring-batch-2.2.xsd">
 
+    <!-- Job Launcher -->
     <bean id="transactionManager"
           class="org.springframework.batch.support.transaction.ResourcelessTransactionManager"/>
 
@@ -20,10 +21,22 @@
         <property name="jobRepository" ref="jobRepository"/>
     </bean>
 
+
+    <!-- Listeners -->
     <bean id="jobListenerInterface" class="com.test.sbt.job.JobListenerInterface"/>
 
     <bean id="jobListenerAnnotations" class="com.test.sbt.job.JobListenerAnnotations"/>
 
+    <bean id="stepListenerInterface" class="com.test.sbt.job.step.StepExecutionListenerInterface"/>
+
+    <bean id="stepListenerAnnotations" class="com.test.sbt.job.step.StepExecutionListenerAnnotations"/>
+
+    <bean id="chunkListenerInterface" class="com.test.sbt.job.chunk.ChunkListenerInterface"/>
+
+    <bean id="chunkListenerAnnotations" class="com.test.sbt.job.chunk.ChunkListenerAnnotations"/>
+
+
+    <!-- Steps -->
     <bean id="itemReader" class="org.springframework.batch.item.file.FlatFileItemReader">
         <property name="resource">
             <bean class="org.springframework.core.io.ClassPathResource">
@@ -72,9 +85,6 @@
         </property>
     </bean>
 
-    <bean id="stepListenerInterface" class="com.test.sbt.job.step.StepExecutionListenerInterface"/>
-    <bean id="stepListenerAnnotations" class="com.test.sbt.job.step.StepExecutionListenerAnnotations"/>
-
     <batch:step id="abstractStep" abstract="true">
         <batch:tasklet>
             <batch:chunk commit-interval="2"/>
@@ -84,6 +94,8 @@
         </batch:listeners>
     </batch:step>
 
+
+    <!-- Job -->
     <batch:job id=" simpleJob">
         <batch:step id="step1" parent="abstractStep">
             <batch:tasklet>
@@ -91,6 +103,14 @@
                     <batch:skippable-exception-classes>
                         <batch:include class="org.springframework.batch.item.file.FlatFileParseException"/>
                     </batch:skippable-exception-classes>
+                    <!--<batch:skippable-exception-classes>-->
+                        <!--<batch:include class="java.lang.Exception"/>-->
+                        <!--<batch:exclude class="java.io.FileNotFoundException"/>-->
+                    <!--</batch:skippable-exception-classes>-->
+                    <batch:listeners>
+                        <batch:listener ref="chunkListenerAnnotations"/>
+                        <batch:listener ref="chunkListenerInterface"/>
+                    </batch:listeners>
                 </batch:chunk>
             </batch:tasklet>
             <batch:listeners merge="true">

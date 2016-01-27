@@ -22,6 +22,7 @@ public class StepExecutionListenerAnnotations {
     @AfterStep
     public ExitStatus afterStep(StepExecution stepExecution) {
         logger.debug("afterStep: {}", stepExecution);
-        return null;
+        // Modified ExitStatus can be returned
+        return stepExecution.getExitStatus();
     }
 }
