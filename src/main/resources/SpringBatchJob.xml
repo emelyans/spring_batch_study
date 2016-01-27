@@ -61,15 +61,14 @@
     <bean id="itemWriter" class="org.springframework.batch.item.file.FlatFileItemWriter">
         <property name="resource" value="file:target/output.csv"/>
         <property name="lineAggregator">
-            <!--<bean class="org.springframework.batch.item.file.transform.FormatterLineAggregator">-->
-            <!--<property name="fieldExtractor">-->
-            <!--<bean class="org.springframework.batch.item.file.transform.BeanWrapperFieldExtractor">-->
-            <!--<property name="names" value="firstName,lastName" />-->
-            <!--</bean>-->
-            <!--</property>-->
-            <!--&lt;!&ndash;<property name="format" value="%-9s%-2.0f" />&ndash;&gt;-->
-            <!--</bean>-->
-            <bean class="org.springframework.batch.item.file.transform.PassThroughLineAggregator"/>
+            <bean class="org.springframework.batch.item.file.transform.FormatterLineAggregator">
+                <property name="fieldExtractor">
+                    <bean class="org.springframework.batch.item.file.transform.BeanWrapperFieldExtractor">
+                        <property name="names" value="firstName,lastName,salary"/>
+                    </bean>
+                </property>
+                <property name="format" value="%s,%s,%-2.0f" />
+            </bean>
         </property>
     </bean>
 
