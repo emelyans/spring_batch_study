@@ -21,7 +21,7 @@ public class JobRun implements JobLauncher {
     @Autowired
     JobLauncher jobLauncher;
 
-    JobExecution jobExecution = null;
+    private JobExecution jobExecution = null;
 
     public void setJob(Job job) {
         this.job = job;

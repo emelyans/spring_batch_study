@@ -3,7 +3,6 @@ package com.test.sbt.job.reader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.annotation.*;
-import org.springframework.batch.core.scope.context.ChunkContext;
 
 /**
  * Created by Sergei on 1/26/2016.
