@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * Created by emelyans on 1/25/2016.
  */
 public class JobRun implements JobLauncher {
-    private final Logger logger = LoggerFactory.getLogger(JobRun.class);
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     Job job;

@@ -10,15 +10,15 @@ import org.springframework.batch.core.StepExecutionListener;
 /**
  * Created by Sergei on 1/26/2016.
  */
-class StepExecutionListenerInterface implements StepExecutionListener {
-    private final Logger logger = LoggerFactory.getLogger(JobRun.class);
+public class StepExecutionListenerInterface implements StepExecutionListener {
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     public void beforeStep(StepExecution stepExecution) {
-        logger.debug("beforeStep");
+        logger.debug("beforeStep: {}", stepExecution);
     }
 
     public ExitStatus afterStep(StepExecution stepExecution) {
-        logger.debug("afterStep");
+        logger.debug("afterStep: {}", stepExecution);
         return null;
     }
 }

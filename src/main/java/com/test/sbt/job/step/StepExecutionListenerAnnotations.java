@@ -12,16 +12,16 @@ import org.springframework.batch.core.annotation.BeforeStep;
  * Created by Sergei on 1/26/2016.
  */
 public class StepExecutionListenerAnnotations {
-    private final Logger logger = LoggerFactory.getLogger(JobRun.class);
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @BeforeStep
     public void beforeStep(StepExecution stepExecution) {
-        logger.debug("beforeStep");
+        logger.debug("beforeStep: {}", stepExecution);
     }
 
     @AfterStep
     public ExitStatus afterStep(StepExecution stepExecution) {
-        logger.debug("afterStep");
+        logger.debug("afterStep: {}", stepExecution);
         return null;
     }
 }
