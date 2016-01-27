@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:batch="http://www.springframework.org/schema/batch"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+            http://www.springframework.org/schema/beans/spring-beans.xsd
+            http://www.springframework.org/schema/batch
+            http://www.springframework.org/schema/batch/spring-batch-2.2.xsd">
+
+    <bean id="transactionManager"
+          class="org.springframework.batch.support.transaction.ResourcelessTransactionManager"/>
+
+    <bean id="jobRepository"
+          class="org.springframework.batch.core.repository.support.MapJobRepositoryFactoryBean">
+        <property name="transactionManager" ref="transactionManager"/>
+    </bean>
+
+    <bean id="jobLauncher"
+          class="org.springframework.batch.core.launch.support.SimpleJobLauncher">
+        <property name="jobRepository" ref="jobRepository"/>
+    </bean>
+
+    <bean id="jobListenerInterface" class="com.test.sbt.job.JobListenerInterface"/>
+
+    <bean id="jobListenerAnnotations" class="com.test.sbt.job.JobListenerAnnotations"/>
+
+    <bean id="itemReader" class="org.springframework.batch.item.file.FlatFileItemReader">
+        <property name="resource">
+            <bean class="org.springframework.core.io.ClassPathResource">
+                <constructor-arg name="path" value="employees.csv"/>
+            </bean>
+        </property>
+        <property name="lineMapper">
+            <bean class="org.springframework.batch.item.file.mapping.DefaultLineMapper">
+                <property name="lineTokenizer">
+                    <bean class="org.springframework.batch.item.file.transform.DelimitedLineTokenizer">
+                        <property name="names">
+                            <array>
+                                <value>firstName</value>
+                                <value>lastName</value>
+                                <value>salary</value>
+                            </array>
+                        </property>
+                    </bean>
+                </property>
+                <property name="fieldSetMapper">
+                    <bean class="org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper">
+                        <property name="targetType">
+                            <bean class="java.lang.Class" factory-method="forName">
+                                <constructor-arg value="com.test.sbt.model.Employee"/>
+                            </bean>
+                        </property>
+                    </bean>
+                </property>
+            </bean>
+        </property>
+    </bean>
+
+    <bean id="itemProcessor" class="com.test.sbt.job.processor.PersonItemProcessor"/>
+
+    <bean id="itemWriter" class="org.springframework.batch.item.file.FlatFileItemWriter">
+        <property name="resource" value="file:target/output.csv"/>
+        <property name="lineAggregator">
+            <!--<bean class="org.springframework.batch.item.file.transform.FormatterLineAggregator">-->
+            <!--<property name="fieldExtractor">-->
+            <!--<bean class="org.springframework.batch.item.file.transform.BeanWrapperFieldExtractor">-->
+            <!--<property name="names" value="firstName,lastName" />-->
+            <!--</bean>-->
+            <!--</property>-->
+            <!--&lt;!&ndash;<property name="format" value="%-9s%-2.0f" />&ndash;&gt;-->
+            <!--</bean>-->
+            <bean class="org.springframework.batch.item.file.transform.PassThroughLineAggregator"/>
+        </property>
+    </bean>
+
+    <bean id="stepListenerInterface" class="com.test.sbt.job.step.StepExecutionListenerInterface"/>
+    <bean id="stepListenerAnnotations" class="com.test.sbt.job.step.StepExecutionListenerAnnotations"/>
+
+    <batch:step id="abstractStep" abstract="true">
+        <batch:tasklet>
+            <batch:chunk commit-interval="2"/>
+        </batch:tasklet>
+        <batch:listeners>
+            <batch:listener ref="stepListenerInterface"/>
+        </batch:listeners>
+    </batch:step>
+
+    <batch:job id=" simpleJob">
+        <batch:step id="step1" parent="abstractStep">
+            <batch:tasklet>
+                <batch:chunk reader="itemReader" processor="itemProcessor" writer="itemWriter" skip-limit="100">
+                    <batch:skippable-exception-classes>
+                        <batch:include class="org.springframework.batch.item.file.FlatFileParseException"/>
+                    </batch:skippable-exception-classes>
+                </batch:chunk>
+            </batch:tasklet>
+            <batch:listeners merge="true">
+                <batch:listener ref="stepListenerAnnotations"/>
+            </batch:listeners>
+        </batch:step>
+        <batch:listeners>
+            <batch:listener ref="jobListenerAnnotations"/>
+            <batch:listener ref="jobListenerInterface"/>
+        </batch:listeners>
+    </batch:job>
+</beans>
