@@ -197,23 +197,28 @@
         </batch:step>
 
         <batch:decision id="decision" decider="decider">
-            <batch:next on="COMPLETED" to="step4"/>
+            <batch:next on="COMPLETED" to="split1"/>
             <batch:fail on="FAILED"/>
         </batch:decision>
 
-        <batch:step id="step4" next="step5">
-            <batch:tasklet ref="taskletAdapterTest"/>
-        </batch:step>
-
-        <batch:step id="step5">
-            <batch:tasklet ref="taskletTest"/>
-            <batch:listeners>
-                <batch:listener ref="stepListenerAnnotations"/>
-                <batch:listener ref="stepListenerInterface"/>
-                <batch:listener ref="chunkListenerAnnotations"/>
-                <batch:listener ref="chunkListenerInterface"/>
-            </batch:listeners>
-        </batch:step>
+        <batch:split id="split1">
+            <batch:flow>
+                <batch:step id="step4">
+                    <batch:tasklet ref="taskletAdapterTest"/>
+                </batch:step>
+            </batch:flow>
+            <batch:flow>
+                <batch:step id="step5">
+                    <batch:tasklet ref="taskletTest"/>
+                    <batch:listeners>
+                        <batch:listener ref="stepListenerAnnotations"/>
+                        <batch:listener ref="stepListenerInterface"/>
+                        <batch:listener ref="chunkListenerAnnotations"/>
+                        <batch:listener ref="chunkListenerInterface"/>
+                    </batch:listeners>
+                </batch:step>
+            </batch:flow>
+        </batch:split>
 
         <batch:listeners>
             <batch:listener ref="jobListenerAnnotations"/>
