@@ -43,6 +43,14 @@
 
     <bean id="itemProcessListenerAnnotations" class="com.test.sbt.job.processor.ItemProcessListenerAnnotations"/>
 
+    <bean id="itemWriteListenerInterface" class="com.test.sbt.job.writer.ItemWriteListenerInterface"/>
+
+    <bean id="itemWriteListenerAnnotations" class="com.test.sbt.job.writer.ItemWriteListenerAnnotations"/>
+
+    <bean id="skipListenerInterface" class="com.test.sbt.job.step.SkipListenerInterface"/>
+
+    <bean id="skipListenerAnnotations" class="com.test.sbt.job.step.SkipListenerAnnotations"/>
+
 
     <!-- Steps -->
     <bean id="itemReader" class="org.springframework.batch.item.file.FlatFileItemReader">
@@ -122,6 +130,10 @@
                         <batch:listener ref="itemReadListenerInterface"/>
                         <batch:listener ref="itemProcessListenerAnnotations"/>
                         <batch:listener ref="itemProcessListenerInterface"/>
+                        <batch:listener ref="itemWriteListenerAnnotations"/>
+                        <batch:listener ref="itemWriteListenerInterface"/>
+                        <batch:listener ref="skipListenerAnnotations"/>
+                        <batch:listener ref="skipListenerInterface"/>
                     </batch:listeners>
                 </batch:chunk>
             </batch:tasklet>
