@@ -110,10 +110,22 @@
         </batch:listeners>
     </batch:step>
 
+    <bean id="taskletAdapterTest" class="org.springframework.batch.core.step.tasklet.MethodInvokingTaskletAdapter">
+        <property name="targetObject">
+            <bean class="com.test.sbt.job.TaskletAdapterTest"/>
+        </property>
+        <property name="targetMethod" value="test"/>
+        <property name="arguments">
+            <array>
+                <value>Tasklet adapter works!</value>
+            </array>
+        </property>
+    </bean>
+
 
     <!-- Job -->
     <batch:job id=" simpleJob">
-        <batch:step id="step1" parent="abstractStep">
+        <batch:step id="step1" parent="abstractStep" next="step2">
             <batch:tasklet>
                 <batch:chunk reader="itemReader" processor="itemProcessor" writer="itemWriter" skip-limit="100">
                     <batch:skippable-exception-classes>
@@ -140,6 +152,9 @@
             <batch:listeners merge="true">
                 <batch:listener ref="stepListenerAnnotations"/>
             </batch:listeners>
+        </batch:step>
+        <batch:step id="step2">
+            <batch:tasklet ref="taskletAdapterTest"/>
         </batch:step>
         <batch:listeners>
             <batch:listener ref="jobListenerAnnotations"/>
