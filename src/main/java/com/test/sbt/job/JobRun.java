@@ -15,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class JobRun{
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    private static final String OUTPUT_FILE_NAME = "file:target/output.csv";
+
     @Autowired
     Job job;
 
@@ -33,7 +35,7 @@ public class JobRun{
 
     public String run() {
         final JobParameters jobParameters = new JobParametersBuilder() //
-                // .addString("outputFile", outputFile) //
+                .addString("outputFile", OUTPUT_FILE_NAME)
                 .toJobParameters();
         logger.debug("Run SpringBatch job...");
         try {

@@ -59,6 +59,7 @@
                 <constructor-arg name="path" value="employees.csv"/>
             </bean>
         </property>
+        <property name="linesToSkip" value="1"/>
         <property name="lineMapper">
             <bean class="org.springframework.batch.item.file.mapping.DefaultLineMapper">
                 <property name="lineTokenizer">
@@ -87,8 +88,8 @@
 
     <bean id="itemProcessor" class="com.test.sbt.job.processor.PersonItemProcessor"/>
 
-    <bean id="itemWriter" class="org.springframework.batch.item.file.FlatFileItemWriter">
-        <property name="resource" value="file:target/output.csv"/>
+    <bean id="itemWriter" class="org.springframework.batch.item.file.FlatFileItemWriter" scope="step">
+        <property name="resource" value="#{jobParameters['outputFile']}"/>
         <property name="lineAggregator">
             <bean class="org.springframework.batch.item.file.transform.FormatterLineAggregator">
                 <property name="fieldExtractor">
