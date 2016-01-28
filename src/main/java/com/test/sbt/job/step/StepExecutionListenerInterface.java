@@ -13,11 +13,15 @@ public class StepExecutionListenerInterface implements StepExecutionListener {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     public void beforeStep(StepExecution stepExecution) {
+        logger.debug("");
+        logger.debug("********** STEP: {} **********", stepExecution.getStepName());
         logger.debug("beforeStep: {}", stepExecution);
     }
 
     public ExitStatus afterStep(StepExecution stepExecution) {
         logger.debug("afterStep: {}", stepExecution);
+        logger.debug("********** STEP: {} **********", stepExecution.getStepName());
+        logger.debug("");
         // Modified ExitStatus can be returned
         return stepExecution.getExitStatus();
     }

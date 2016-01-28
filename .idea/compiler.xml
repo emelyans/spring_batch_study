@@ -19,13 +19,15 @@
       </profile>
       <profile default="false" name="Maven default annotation processors profile" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
-        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <sourceTestOutputDir name="target\generated-test-sources\test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="true" />
+        <module name="spring_batch_study" />
         <module name="SpringBatchTest" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="spring_batch_study" target="1.5" />
       <module name="SpringBatchTest" target="1.5" />
     </bytecodeTargetLevel>
   </component>

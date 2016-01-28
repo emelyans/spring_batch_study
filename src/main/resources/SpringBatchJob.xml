@@ -131,19 +131,23 @@
     </bean>
 
     <batch:step id="abstractStep" abstract="true">
+        <batch:listeners>
+            <batch:listener ref="stepListenerInterface"/>
+            <!--<batch:listener ref="stepListenerAnnotations"/>-->
+        </batch:listeners>
+    </batch:step>
+
+    <batch:step id="chunkAbstractStep" parent="abstractStep" abstract="true">
         <batch:tasklet>
             <batch:chunk commit-interval="2"/>
         </batch:tasklet>
-        <batch:listeners>
-            <batch:listener ref="stepListenerInterface"/>
-        </batch:listeners>
     </batch:step>
 
 
     <!-- Job -->
     <batch:job id=" simpleJob">
 
-        <batch:step id="step1" parent="abstractStep" next="step2">
+        <batch:step id="step1" parent="chunkAbstractStep" next="step2">
             <batch:tasklet>
                 <batch:chunk reader="itemReader" processor="itemProcessor" writer="itemWriter" skip-limit="100">
                     <batch:skippable-exception-classes>
@@ -153,45 +157,38 @@
                     <!--<batch:include class="java.lang.Exception"/>-->
                     <!--<batch:exclude class="java.io.FileNotFoundException"/>-->
                     <!--</batch:skippable-exception-classes>-->
-                    <batch:listeners>
-                        <batch:listener ref="chunkListenerAnnotations"/>
-                        <batch:listener ref="chunkListenerInterface"/>
-                        <batch:listener ref="itemReadListenerAnnotations"/>
-                        <batch:listener ref="itemReadListenerInterface"/>
-                        <batch:listener ref="itemProcessListenerAnnotations"/>
-                        <batch:listener ref="itemProcessListenerInterface"/>
-                        <batch:listener ref="itemWriteListenerAnnotations"/>
-                        <batch:listener ref="itemWriteListenerInterface"/>
-                        <batch:listener ref="skipListenerAnnotations"/>
-                        <batch:listener ref="skipListenerInterface"/>
-                    </batch:listeners>
                 </batch:chunk>
             </batch:tasklet>
             <batch:listeners merge="true">
-                <batch:listener ref="stepListenerAnnotations"/>
+                <!--<batch:listener ref="chunkListenerAnnotations"/>-->
+                <batch:listener ref="chunkListenerInterface"/>
+                <!--<batch:listener ref="itemReadListenerAnnotations"/>-->
+                <batch:listener ref="itemReadListenerInterface"/>
+                <!--<batch:listener ref="itemProcessListenerAnnotations"/>-->
+                <batch:listener ref="itemProcessListenerInterface"/>
+                <!--<batch:listener ref="itemWriteListenerAnnotations"/>-->
+                <batch:listener ref="itemWriteListenerInterface"/>
+                <!--<batch:listener ref="skipListenerAnnotations"/>-->
+                <batch:listener ref="skipListenerInterface"/>
             </batch:listeners>
         </batch:step>
 
-        <batch:step id="step2">
+        <batch:step id="step2" parent="abstractStep">
             <batch:tasklet ref="throwExceptionTasklet1"/>
             <batch:end on="FAILED" exit-code="FAILED"/>
             <batch:next on="*" to="step3"/>
-            <batch:listeners>
-                <batch:listener ref="stepListenerAnnotations"/>
-                <batch:listener ref="stepListenerInterface"/>
-                <batch:listener ref="chunkListenerAnnotations"/>
+            <batch:listeners merge="true">
+                <!--<batch:listener ref="chunkListenerAnnotations"/>-->
                 <batch:listener ref="chunkListenerInterface"/>
             </batch:listeners>
         </batch:step>
 
-        <batch:step id="step3">
+        <batch:step id="step3" parent="abstractStep">
             <batch:tasklet ref="throwExceptionTasklet2"/>
             <batch:fail on="FAILED"/>
             <batch:next on="*" to="decision"/>
-            <batch:listeners>
-                <batch:listener ref="stepListenerAnnotations"/>
-                <batch:listener ref="stepListenerInterface"/>
-                <batch:listener ref="chunkListenerAnnotations"/>
+            <batch:listeners merge="true">
+                <!--<batch:listener ref="chunkListenerAnnotations"/>-->
                 <batch:listener ref="chunkListenerInterface"/>
             </batch:listeners>
         </batch:step>
@@ -203,17 +200,19 @@
 
         <batch:split id="split1">
             <batch:flow>
-                <batch:step id="step4">
+                <batch:step id="step4" parent="abstractStep">
                     <batch:tasklet ref="taskletAdapterTest"/>
+                    <batch:listeners merge="true">
+                        <!--<batch:listener ref="chunkListenerAnnotations"/>-->
+                        <batch:listener ref="chunkListenerInterface"/>
+                    </batch:listeners>
                 </batch:step>
             </batch:flow>
             <batch:flow>
-                <batch:step id="step5">
+                <batch:step id="step5" parent="abstractStep">
                     <batch:tasklet ref="taskletTest"/>
-                    <batch:listeners>
-                        <batch:listener ref="stepListenerAnnotations"/>
-                        <batch:listener ref="stepListenerInterface"/>
-                        <batch:listener ref="chunkListenerAnnotations"/>
+                    <batch:listeners merge="true">
+                        <!--<batch:listener ref="chunkListenerAnnotations"/>-->
                         <batch:listener ref="chunkListenerInterface"/>
                     </batch:listeners>
                 </batch:step>
@@ -221,7 +220,7 @@
         </batch:split>
 
         <batch:listeners>
-            <batch:listener ref="jobListenerAnnotations"/>
+            <!--<batch:listener ref="jobListenerAnnotations"/>-->
             <batch:listener ref="jobListenerInterface"/>
         </batch:listeners>
     </batch:job>
