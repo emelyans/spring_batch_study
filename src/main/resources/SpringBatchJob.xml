@@ -101,21 +101,16 @@
         </property>
     </bean>
 
-    <batch:step id="abstractStep" abstract="true">
-        <batch:tasklet>
-            <batch:chunk commit-interval="2"/>
-        </batch:tasklet>
-        <batch:listeners>
-            <batch:listener ref="stepListenerInterface"/>
-        </batch:listeners>
-    </batch:step>
-
     <bean id="throwExceptionTasklet1" class="com.test.sbt.job.tasklet.ThrowExceptionTasklet">
         <property name="throwException" value="false"/>
     </bean>
 
     <bean id="throwExceptionTasklet2" class="com.test.sbt.job.tasklet.ThrowExceptionTasklet">
         <property name="throwException" value="false"/>
+    </bean>
+
+    <bean id="decider" class="com.test.sbt.job.DeciderTest">
+        <property name="flowExecutionStatus" value="COMPLETED"/>
     </bean>
 
     <bean id="taskletAdapterTest" class="org.springframework.batch.core.step.tasklet.MethodInvokingTaskletAdapter">
@@ -134,6 +129,16 @@
         <property name="message" value="Tasklet test."/>
         <property name="callTimes" value="5"/>
     </bean>
+
+    <batch:step id="abstractStep" abstract="true">
+        <batch:tasklet>
+            <batch:chunk commit-interval="2"/>
+        </batch:tasklet>
+        <batch:listeners>
+            <batch:listener ref="stepListenerInterface"/>
+        </batch:listeners>
+    </batch:step>
+
 
     <!-- Job -->
     <batch:job id=" simpleJob">
@@ -182,7 +187,7 @@
         <batch:step id="step3">
             <batch:tasklet ref="throwExceptionTasklet2"/>
             <batch:fail on="FAILED"/>
-            <batch:next on="*" to="step4"/>
+            <batch:next on="*" to="decision"/>
             <batch:listeners>
                 <batch:listener ref="stepListenerAnnotations"/>
                 <batch:listener ref="stepListenerInterface"/>
@@ -190,6 +195,11 @@
                 <batch:listener ref="chunkListenerInterface"/>
             </batch:listeners>
         </batch:step>
+
+        <batch:decision id="decision" decider="decider">
+            <batch:next on="COMPLETED" to="step4"/>
+            <batch:fail on="FAILED"/>
+        </batch:decision>
 
         <batch:step id="step4" next="step5">
             <batch:tasklet ref="taskletAdapterTest"/>
