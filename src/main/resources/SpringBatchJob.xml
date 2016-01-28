@@ -110,7 +110,11 @@
         </batch:listeners>
     </batch:step>
 
-    <bean id="throwExceptionTasklet" class="com.test.sbt.job.tasklet.ThrowExceptionTasklet">
+    <bean id="throwExceptionTasklet1" class="com.test.sbt.job.tasklet.ThrowExceptionTasklet">
+        <property name="throwException" value="false"/>
+    </bean>
+
+    <bean id="throwExceptionTasklet2" class="com.test.sbt.job.tasklet.ThrowExceptionTasklet">
         <property name="throwException" value="false"/>
     </bean>
 
@@ -164,7 +168,7 @@
         </batch:step>
 
         <batch:step id="step2">
-            <batch:tasklet ref="throwExceptionTasklet"/>
+            <batch:tasklet ref="throwExceptionTasklet1"/>
             <batch:end on="FAILED" exit-code="FAILED"/>
             <batch:next on="*" to="step3"/>
             <batch:listeners>
@@ -175,11 +179,23 @@
             </batch:listeners>
         </batch:step>
 
-        <batch:step id="step3" next="step4">
+        <batch:step id="step3">
+            <batch:tasklet ref="throwExceptionTasklet2"/>
+            <batch:fail on="FAILED"/>
+            <batch:next on="*" to="step4"/>
+            <batch:listeners>
+                <batch:listener ref="stepListenerAnnotations"/>
+                <batch:listener ref="stepListenerInterface"/>
+                <batch:listener ref="chunkListenerAnnotations"/>
+                <batch:listener ref="chunkListenerInterface"/>
+            </batch:listeners>
+        </batch:step>
+
+        <batch:step id="step4" next="step5">
             <batch:tasklet ref="taskletAdapterTest"/>
         </batch:step>
 
-        <batch:step id="step4">
+        <batch:step id="step5">
             <batch:tasklet ref="taskletTest"/>
             <batch:listeners>
                 <batch:listener ref="stepListenerAnnotations"/>
