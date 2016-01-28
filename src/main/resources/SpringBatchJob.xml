@@ -129,6 +129,7 @@
 
     <!-- Job -->
     <batch:job id=" simpleJob">
+
         <batch:step id="step1" parent="abstractStep" next="step2">
             <batch:tasklet>
                 <batch:chunk reader="itemReader" processor="itemProcessor" writer="itemWriter" skip-limit="100">
@@ -157,11 +158,19 @@
                 <batch:listener ref="stepListenerAnnotations"/>
             </batch:listeners>
         </batch:step>
+
         <batch:step id="step2" next="step3">
             <batch:tasklet ref="taskletAdapterTest"/>
         </batch:step>
+
         <batch:step id="step3">
             <batch:tasklet ref="taskletTest"/>
+            <batch:listeners>
+                <batch:listener ref="stepListenerAnnotations"/>
+                <batch:listener ref="stepListenerInterface"/>
+                <batch:listener ref="chunkListenerAnnotations"/>
+                <batch:listener ref="chunkListenerInterface"/>
+           </batch:listeners>
         </batch:step>
 
         <batch:listeners>
