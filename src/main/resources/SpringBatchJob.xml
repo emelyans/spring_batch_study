@@ -112,7 +112,7 @@
 
     <bean id="taskletAdapterTest" class="org.springframework.batch.core.step.tasklet.MethodInvokingTaskletAdapter">
         <property name="targetObject">
-            <bean class="com.test.sbt.job.TaskletAdapterTest"/>
+            <bean class="com.test.sbt.job.tasklet.TaskletAdapterTest"/>
         </property>
         <property name="targetMethod" value="test"/>
         <property name="arguments">
@@ -122,6 +122,10 @@
         </property>
     </bean>
 
+    <bean id="taskletTest" class="com.test.sbt.job.tasklet.TaskletTest">
+        <property name="message" value="Tasklet test."/>
+        <property name="callTimes" value="5"/>
+    </bean>
 
     <!-- Job -->
     <batch:job id=" simpleJob">
@@ -153,9 +157,13 @@
                 <batch:listener ref="stepListenerAnnotations"/>
             </batch:listeners>
         </batch:step>
-        <batch:step id="step2">
+        <batch:step id="step2" next="step3">
             <batch:tasklet ref="taskletAdapterTest"/>
         </batch:step>
+        <batch:step id="step3">
+            <batch:tasklet ref="taskletTest"/>
+        </batch:step>
+
         <batch:listeners>
             <batch:listener ref="jobListenerAnnotations"/>
             <batch:listener ref="jobListenerInterface"/>
