@@ -96,7 +96,7 @@
                         <property name="names" value="firstName,lastName,salary"/>
                     </bean>
                 </property>
-                <property name="format" value="%s,%s,%-2.0f" />
+                <property name="format" value="%s,%s,%-2.0f"/>
             </bean>
         </property>
     </bean>
@@ -109,6 +109,10 @@
             <batch:listener ref="stepListenerInterface"/>
         </batch:listeners>
     </batch:step>
+
+    <bean id="throwExceptionTasklet" class="com.test.sbt.job.tasklet.ThrowExceptionTasklet">
+        <property name="throwException" value="false"/>
+    </bean>
 
     <bean id="taskletAdapterTest" class="org.springframework.batch.core.step.tasklet.MethodInvokingTaskletAdapter">
         <property name="targetObject">
@@ -137,8 +141,8 @@
                         <batch:include class="org.springframework.batch.item.file.FlatFileParseException"/>
                     </batch:skippable-exception-classes>
                     <!--<batch:skippable-exception-classes>-->
-                        <!--<batch:include class="java.lang.Exception"/>-->
-                        <!--<batch:exclude class="java.io.FileNotFoundException"/>-->
+                    <!--<batch:include class="java.lang.Exception"/>-->
+                    <!--<batch:exclude class="java.io.FileNotFoundException"/>-->
                     <!--</batch:skippable-exception-classes>-->
                     <batch:listeners>
                         <batch:listener ref="chunkListenerAnnotations"/>
@@ -159,18 +163,30 @@
             </batch:listeners>
         </batch:step>
 
-        <batch:step id="step2" next="step3">
+        <batch:step id="step2">
+            <batch:tasklet ref="throwExceptionTasklet"/>
+            <batch:end on="FAILED" exit-code="FAILED"/>
+            <batch:next on="*" to="step3"/>
+            <batch:listeners>
+                <batch:listener ref="stepListenerAnnotations"/>
+                <batch:listener ref="stepListenerInterface"/>
+                <batch:listener ref="chunkListenerAnnotations"/>
+                <batch:listener ref="chunkListenerInterface"/>
+            </batch:listeners>
+        </batch:step>
+
+        <batch:step id="step3" next="step4">
             <batch:tasklet ref="taskletAdapterTest"/>
         </batch:step>
 
-        <batch:step id="step3">
+        <batch:step id="step4">
             <batch:tasklet ref="taskletTest"/>
             <batch:listeners>
                 <batch:listener ref="stepListenerAnnotations"/>
                 <batch:listener ref="stepListenerInterface"/>
                 <batch:listener ref="chunkListenerAnnotations"/>
                 <batch:listener ref="chunkListenerInterface"/>
-           </batch:listeners>
+            </batch:listeners>
         </batch:step>
 
         <batch:listeners>

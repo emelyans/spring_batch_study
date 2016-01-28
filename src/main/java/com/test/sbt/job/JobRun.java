@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 /**
  * Created by emelyans on 1/25/2016.
  */
-public class JobRun implements JobLauncher {
+public class JobRun{
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
@@ -31,7 +31,7 @@ public class JobRun implements JobLauncher {
         this.jobLauncher = jobLauncher;
     }
 
-    public void run() {
+    public String run() {
         final JobParameters jobParameters = new JobParametersBuilder() //
                 // .addString("outputFile", outputFile) //
                 .toJobParameters();
@@ -50,9 +50,7 @@ public class JobRun implements JobLauncher {
 
         logger.debug("Status: {}", jobExecution.getStatus());
         logger.debug("Exit Status: {}", jobExecution.getExitStatus().getExitCode());
-    }
 
-    public JobExecution run(Job job, JobParameters jobParameters) throws JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException, JobParametersInvalidException {
-        return null;
+        return jobExecution.getExitStatus().getExitCode();
     }
 }

@@ -12,6 +12,11 @@ class Main {
         ApplicationContext context = new ClassPathXmlApplicationContext("classpath:SpringConfiguration.xml");
 
         JobRun jobRun = (JobRun) context.getBean("jobRun");
-        jobRun.run();
+        String exitCode = jobRun.run();
+
+        if("FAILED".equals(exitCode))
+            System.exit(1);
+        else
+            System.exit(0);
     }
 }
